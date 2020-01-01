@@ -1,0 +1,32 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist",
+        "allowJs": false,
+        "moduleResolution": "node",
+        "noImplicitReturns": true,
+        "removeComments": true,
+        "resolveJsonModule": true,
+        "target": "es6",
+        "noEmitOnError": false,
+        "experimentalDecorators": false,
+        "esModuleInterop": true,
+        "module": "commonjs",
+        "alwaysStrict": false,
+        "noUnusedParameters": false,
+        "allowUnreachableCode": false,
+        "declaration": true,
+        "preserveConstEnums": true,
+        "strictNullChecks": false,
+        "skipLibCheck": true,
+        "strict": true,
+        "baseUrl": "."
+    },
+    "include": [
+        "src/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist",
+        "../config.json"
+    ]
+}
