@@ -1,5 +1,5 @@
 # Dashblock SDK
 
 ## Languages
-[Javascript](javascript/README.md)
-[Python](python/README.md)
+[Javascript](./javascript)
+[Python](./python)
