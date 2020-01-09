@@ -1,3 +1,1 @@
-import { Dashblock } from "./dashblock"
-
-export default Dashblock
+export { Dashblock } from "./dashblock"

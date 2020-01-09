@@ -43,7 +43,12 @@ export class Client extends EventEmitter {
                 }
             })
             socket.onerror = (err: any) => {
-                reject(`Server ${address} unreachable. Are you sure of the address ?`)
+                if (err.message) {
+                    reject(err.message)    
+                }
+                else {
+                    reject(`Server ${address} unreachable. Are you sure of the address ?`)
+                }
             }
             socket.onopen = () => {
                 socket.onmessage = (msg: any) => {
@@ -54,7 +59,12 @@ export class Client extends EventEmitter {
                             resolve(client)
                         }
                         else if(msg.state=='ERROR') {
-                            reject("Unable to connect")
+                            if (msg.error) {
+                                reject(msg.error)
+                            }
+                            else {
+                                reject("Unable to connect")
+                            }
                         }
                     }
                     catch(e) {

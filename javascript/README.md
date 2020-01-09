@@ -11,24 +11,21 @@ npm install @dashblock/sdk
 ```
 
 ```javascript
-var Dashblock = require("@dashblock/sdk")
+var Dashblock = require("@dashblock/sdk").Dashblock
 //or
-import Dashblock from "@dashblock/sdk"
+import { Dashblock } from "@dashblock/sdk"
 ```
 
 ## Getting started
 
 ```javascript
-var Dashblock = require("@dashblock/sdk")
+var Dashblock = require("@dashblock/sdk").Dashblock
 
 //Create an account on beta.dashblock.io to get an API Key
-var dk = new Dashblock("ws://beta.dashblock.com", { api_key: [YOU_API_KEY] })
-
+var dk = await Dashblock.connect("wss://beta.dashblock.com", { api_key: YOU_API_KEY })
 await dk.goto("https://www.google.com")
 var content = await dk.html()
-
 console.log(content)
-
 await dk.close()
 ```
 
