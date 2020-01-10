@@ -17,7 +17,7 @@ import asyncio
 
 async def main():
     # You can get an API Key on beta.dashblock.com
-    dk = await Dashblock.connect("ws://beta.dashblock.com", api_key=YOU_API_KEY)
+    dk = await Dashblock.connect(api_key=YOU_API_KEY)
     await dk.goto("https://www.google.com", timeout=5000)
     content = await dk.html()
     print(content)

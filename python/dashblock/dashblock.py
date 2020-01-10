@@ -7,7 +7,7 @@ class Dashblock:
         self.client = client
     
     @staticmethod
-    async def connect(endpoint, api_key):
+    async def connect(api_key, endpoint='wss://beta.dashblock.com'):
         client = await Client.connect(endpoint, api_key)
         return Dashblock(client)
 
