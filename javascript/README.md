@@ -21,12 +21,16 @@ import { Dashblock } from "@dashblock/sdk"
 ```javascript
 var Dashblock = require("@dashblock/sdk").Dashblock
 
-//Create an account on beta.dashblock.io to get an API Key
-var dk = await Dashblock.connect("wss://beta.dashblock.com", { api_key: YOU_API_KEY })
-await dk.goto("https://www.google.com")
-var content = await dk.html()
-console.log(content)
-await dk.close()
+var main = async function() {
+    //Create an account on beta.dashblock.io to get an API Key
+    var dk = await Dashblock.connect("wss://beta.dashblock.com", { api_key: YOU_API_KEY })
+    await dk.goto("https://www.google.com", { timeout: 5000 })
+    var content = await dk.html()
+    console.log(content)
+    await dk.close()
+}
+
+main()
 ```
 
 ## Methods
