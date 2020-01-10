@@ -5,8 +5,6 @@ class Dashblock:
 
     def __init__(self, client):
         self.client = client
-        self.client.on('page', lambda page : self.emit('page', page))
-        self.client.on('frame', lambda frame : self.emit('frame', frame))
     
     @staticmethod
     async def connect(endpoint, api_key):
@@ -14,7 +12,7 @@ class Dashblock:
         return Dashblock(client)
 
     async def goto(self, url, timeout=5000):
-        return await self.client.send('goto', { "url": url, "timeout": 5000 })
+        return await self.client.send('goto', { "url": url, "timeout": timeout })
     
     async def html(self):
         return await self.client.send('html')

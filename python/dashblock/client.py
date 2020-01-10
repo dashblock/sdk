@@ -120,14 +120,12 @@ class Client(EventEmitter):
             callback.set_result(msg.get('results'))
 
     def _on_query(self, msg: dict) -> None:
-        print(msg)
         event = msg.get('event', '')
         data = msg.get('data', {}).get('data', {})
         metadata = msg.get('metadata', {})
         self.emit(event, data, metadata)
 
     async def _on_message(self, message: str) -> None:
-        print(message)
         await asyncio.sleep(self._delay)
         logger_connection.debug(f'RECV: {message}')
         msg = json.loads(message)
