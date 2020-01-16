@@ -5,7 +5,7 @@ export class Dashblock extends EventEmitter {
     
     client: Client;
 
-    constructor(client: Client) {
+    private constructor(client: Client) {
         super()
         this.client = client;
         this.on('newListener', async (evtName: string, cb: Function) => {
@@ -14,10 +14,15 @@ export class Dashblock extends EventEmitter {
             })
         })
     }
-    
-    static async connect(address: string, options: { api_key: string }) {
-        var client = await Client.connect(address, options)
+
+    static async connect(options: { api_key: string, endpoint?: string }) {
+        var endpoint = options.endpoint || "wss://beta.dashblock.com"
+        var client = await Client.connect(endpoint, options)
         return new Dashblock(client)
+    }
+
+    async collect(schema: any) {
+        return this.client.send("collect", { schema: schema })
     }
 
     async goto(url: string, options?: { timeout: number }) {

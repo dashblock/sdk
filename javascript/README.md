@@ -1,30 +1,32 @@
 # Javascript SDK
 
 ## Table of Contents
-- [Installation](#installation)
-- [Getting Started](#getting-started)
-- [Methods](#methods)
+1. [Getting Started](#getting-started)
+2. [API](#api)
+    - dk.goto(url: `string`, options: `object`)
+    - dk.html()
+    - dk.collect(schema: `Schema`)
+    - dk.close()
 
-## Installation
+---
+
+## 1. Getting Started
+
+How to install it ?
+
 ```shell
 npm install @dashblock/sdk
 ```
 
-```javascript
-var Dashblock = require("@dashblock/sdk").Dashblock
-//or
-import { Dashblock } from "@dashblock/sdk"
-```
-
-## Getting started
+How to use it ?
 
 ```javascript
 var Dashblock = require("@dashblock/sdk").Dashblock
 
 var main = async function() {
-    //Create an account on beta.dashblock.io to get an API Key
-    var dk = await Dashblock.connect("wss://beta.dashblock.com", { api_key: YOU_API_KEY })
-    await dk.goto("https://www.google.com", { timeout: 5000 })
+    //Create an account on beta.dashblock.com to get an API Key
+    var dk = await Dashblock.connect({ api_key: YOU_API_KEY })
+    await dk.goto("https://www.google.com")
     var content = await dk.html()
     console.log(content)
     await dk.close()
@@ -33,11 +35,107 @@ var main = async function() {
 main()
 ```
 
-## Methods
-- goto
-- html
+---
 
-(Coming soon)
-- click
-- input
-- collect
+## 2. API
+### __**dk.goto(url, options)**__
+##### Parameters
+- url <`string`> Goto a specific URL and wait for the page to stabilize.
+- options `Object` Optional.
+    - timeout `string` Wait up to timeout milliseconds before continuing.
+
+##### Return object
+- `Promise<void>`
+
+### **dk.html()**
+Return the html of the page.
+
+##### Return
+- `Promise<string>`
+
+### **dk.collect(schema: `Schema`)**
+Collect and structure automatically data on a given page.
+
+##### Parameters
+- `Schema`: `SchemaItem[]`
+- `SchemaItem`:
+    - name: `string`. Define the name of the information
+    - format: `string`. Accepted values are `DATE`, `DATE_RANGE`, `URL`, `STRING`. Defaults to `STRING`. DATE and DATE_RANGE format accept natural language format.
+    - attribute: `Object`. Define where to get the value
+        - css: `string`. Get the css property of an elements, must be mapped to camel case (background-image => backgroundImage). Accepted values: backgroundImage.
+        - html: `string`. Get the attribute from the html tag (href, src...)
+    - selection: `Selector[]`
+
+- `Selector`:
+    - css: `string`. Identify one or more elements on a page. The provided selector(s) need to match all the elements you want to extract.
+
+##### Return object
+- `Promise<Object[]>`. Where object follows the defined schema
+
+##### Sample
+```javascript
+    await dk.goto("https://news.ycombinator.com/")
+    var results = await dk.collect([{
+                        name: 'title',
+                        selection: [{
+                            css: 'td.title > a.storylink'
+                        }]
+                    }, 
+                    {
+                        name: 'link',
+                        attribute: {
+                            html: 'href'
+                        },
+                        selection: [{
+                            css: 'td.title > a.storylink'
+                        }]
+                    },
+                    {
+                        name: 'points',
+                        selection: [{
+                            css: 'span.score'
+                        }]
+                    }, 
+                    {
+                        name: 'username',
+                        selection: [{
+                            css: 'td.subtext > a.hnuser'
+                        }]
+                    },
+                    {
+                        name: 'posted_ts',
+                        format: 'DATE',
+                        selection: [{
+                            css: 'span.age > a'
+                        }]
+                    },
+                    {
+                        name: 'comments',
+                        selection: [{
+                            css: 'td.subtext > a:nth-child(6)'
+                        }]
+                    }])
+
+// Results will look like :
+// [ { title:
+//      'An ant colony has memories its individual members don’t have (2019)',
+//     link:
+//      'https://aeon.co/ideas/an-ant-colony-has-memories-that-its-individual-members-dont-have',
+//     points: '177 points',
+//     username: 'maxbaines',
+//     posted_ts: '2020-01-16 08:24:06',
+//     comments: '58 comments' },
+//   { title: 'Why Amsterdam’s Canal Houses Have Endured for 300 Years',
+//     link:
+//      'https://www.citylab.com/design/2020/01/amsterdam-architecture-history-canal-houses-urban-design/604921/',
+//     points: '9 points',
+//     username: 'pseudolus',
+//     posted_ts: '2020-01-16 11:58:06',
+//     comments: 'discuss' },
+// ....
+```
+
+## Coming Soon
+
+### **dk.click(selector: `Selector`)**
+### **dk.input(selector: `Selector`, value: `string`)**
