@@ -3,6 +3,7 @@
 ## Table of Contents
 1. [Getting Started](#getting-started)
 2. [API](#api)
+    - Dashblock.connect(options: `object`)
     - dk.goto(url: `string`, options: `object`)
     - dk.html()
     - dk.collect(schema: `Schema`)
@@ -38,11 +39,31 @@ main()
 ---
 
 ## 2. API
+### __**Dashblock.connect(options)**__
+##### Parameters
+- options: `Object`
+    - api_key: `string` API Key to authenticate the session. You can find yours here: https://beta.dashblock.com
+    - endpoint: `string` (Optional) Endpoint to connect to (default to wss://beta.dashblock.com)
+    - height: `number` (Optional) Height of the browser viewport (default to 900)
+    - width: `number` (Optional) Width of the browser viewport (default to 1200)
+
+##### Return object
+- `Promise<DashblockInstance>`
+
+##### Sample
+```javascript
+var dk = await Dashblock.connect({
+    api_key: YOU_API_KEY,
+    height: 400,
+    width: 600
+})
+```
+
 ### __**dk.goto(url, options)**__
 ##### Parameters
-- url <`string`> Goto a specific URL and wait for the page to stabilize.
-- options `Object` Optional.
-    - timeout `string` Wait up to timeout milliseconds before continuing.
+- url: `string` Goto a specific URL and wait for the page to stabilize.
+- options: `Object` (Optional).
+    - timeout: `string` Wait up to timeout milliseconds before continuing.
 
 ##### Return object
 - `Promise<void>`

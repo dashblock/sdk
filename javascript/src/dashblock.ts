@@ -15,7 +15,7 @@ export class Dashblock extends EventEmitter {
         })
     }
 
-    static async connect(options: { api_key: string, endpoint?: string }) {
+    static async connect(options: { api_key: string, endpoint?: string, width?: number, height?: number }) {
         var endpoint = options.endpoint || "wss://beta.dashblock.com"
         var client = await Client.connect(endpoint, options)
         return new Dashblock(client)

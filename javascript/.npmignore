@@ -6,3 +6,5 @@ dist/**/*.spec.js
 dist/**/*.spec.d.ts
 dist/config.json
 dist/config.d.ts
+config.json
+samples/*

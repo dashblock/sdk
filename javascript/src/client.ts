@@ -37,10 +37,16 @@ export class Client extends EventEmitter {
 
     static async connect(address: string, options: any): Promise<Client> {
         return new Promise((resolve, reject) => {
+            var headers: any = {}
+            headers['Authorization'] = 'Bearer '+options.api_key
+            if (options.height) {
+                headers['Height'] = options.height
+            }
+            if (options.width) {
+                headers['Width'] = options.width
+            }
             var socket = new WebSocket(address, null, {
-                headers: {
-                    'Authorization': 'Bearer '+options.api_key
-                }
+                headers: headers
             })
             socket.onerror = (err: any) => {
                 if (err.message) {
