@@ -21,8 +21,32 @@ export class Dashblock extends EventEmitter {
         return new Dashblock(client)
     }
 
+    async set(config: { device?: 'desktop' | 'mobile', proxy?: 'datacenter' | 'none' }) {
+        return this.client.send("set", config)
+    }
+
     async collect(schema: any) {
         return this.client.send("collect", { schema: schema })
+    }
+
+    async click(selection: any) {
+        return this.client.send("click", selection)
+    }
+
+    async clickAll(selection: any) {
+        return this.client.send("clickAll", selection)
+    }
+
+    async input(selection: any, value: string) {
+        return this.client.send("input", { css: selection.css, value: value })
+    }
+
+    async submit() {
+        return this.client.send("submit", {})
+    }
+
+    async describe() {
+        return this.client.send("describe", {})
     }
 
     async goto(url: string, options?: { timeout: number }) {
