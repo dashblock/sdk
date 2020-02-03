@@ -4,9 +4,15 @@
 1. [Getting Started](#getting-started)
 2. [API](#api)
     - Dashblock.connect(options: `object`)
+    - dk.set({ device: `string`, proxy: `string` })
     - dk.goto(url: `string`, options: `object`)
     - dk.html()
     - dk.collect(schema: `Schema`)
+    - dk.click({ css: `string` })
+    - dk.clickAll({ css: `string` })
+    - dk.input({css: `string`}, value: `string`)
+    - dk.submit()
+    - dk.describe()
     - dk.close()
 
 ---
@@ -44,8 +50,6 @@ main()
 - options: `Object`
     - api_key: `string` API Key to authenticate the session. You can find yours here: https://beta.dashblock.com
     - endpoint: `string` (Optional) Endpoint to connect to (default to wss://beta.dashblock.com)
-    - height: `number` (Optional) Height of the browser viewport (default to 900)
-    - width: `number` (Optional) Width of the browser viewport (default to 1200)
 
 ##### Return object
 - `Promise<DashblockInstance>`
@@ -53,11 +57,16 @@ main()
 ##### Sample
 ```javascript
 var dk = await Dashblock.connect({
-    api_key: YOU_API_KEY,
-    height: 400,
-    width: 600
+    api_key: YOU_API_KEY
 })
 ```
+### __**dk.set({ device: `string`, proxy: `string`})**__
+##### Parameters
+- device: `string`. Allowed values are `mobile` and `desktop`. The browser will emulate the device dimension and user-agent.
+- proxy: `string`. Allowed values are `none` and `datacenter`. You can use a proxy on the browser to change the default IP addresses.
+
+##### Return object
+- `Promise<void>`
 
 ### __**dk.goto(url, options)**__
 ##### Parameters
@@ -81,7 +90,7 @@ Collect and structure automatically data on a given page.
 - `Schema`: `SchemaItem[]`
 - `SchemaItem`:
     - name: `string`. Define the name of the information
-    - format: `string`. Accepted values are `DATE`, `DATE_RANGE`, `URL`, `STRING`. Defaults to `STRING`. DATE and DATE_RANGE format accept natural language format.
+    - format: `string`. Allowed values are `NUMBER`, `DATE`, `DATE_RANGE`, `URL`, `STRING`, `BOOLEAN`, `CURRENCY`, `ARRAY<NUMBER>`, `ARRAY<DATE>`, `ARRAY<CURRENCY>`. Defaults to `STRING`. This parameter allows you to turn natural language information into a machine readable format.
     - attribute: `Object`. Define where to get the value
         - css: `string`. Get the css property of an elements, must be mapped to camel case (background-image => backgroundImage). Accepted values: backgroundImage.
         - html: `string`. Get the attribute from the html tag (href, src...)
@@ -156,7 +165,43 @@ Collect and structure automatically data on a given page.
 // ....
 ```
 
-## Coming Soon
+### **dk.click({ css: `string` })**
+Click on the element matching the selection
 
-### **dk.click(selector: `Selector`)**
-### **dk.input(selector: `Selector`, value: `string`)**
+##### Parameters
+- `Selector`:
+    - css: `string`. CSS selector matching exactly one element on the page.
+
+##### Return object
+- `Promise<void>`. Where object follows the defined schema
+
+### **dk.clickAll({ css: `string` })**
+Click on all elements matching the selection
+
+##### Parameters
+- `Selector`:
+    - css: `string`. Identify one or more elements on a page.
+
+##### Return object
+- `Promise<void>`
+
+### **dk.input(selector: { css: `string` }, value: `string`)**
+Input data on the given selected input element
+
+##### Parameters
+- selector: Should match a text editable element on the page
+
+##### Return object
+- `Promise<void>`
+
+### **dk.submit()**
+Press enter key (useful to submit form after input action)
+
+##### Return object
+- `Promise<void>`.
+
+### **dk.describe()**
+Send a description of the page (url, title, description, author, favicon, links...)
+
+##### Return object
+- `Promise<PageDescription>`.
