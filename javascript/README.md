@@ -8,11 +8,12 @@
     - dk.goto(url: `string`, options: `object`)
     - dk.html()
     - dk.collect(schema: `Schema`)
-    - dk.click({ css: `string` })
-    - dk.clickAll({ css: `string` })
-    - dk.input({css: `string`}, value: `string`)
+    - dk.click(selection: `Selection`)
+    - dk.clickAll(selection: `Selection`)
+    - dk.input(selection: `Selection`, value: `string`)
     - dk.submit()
     - dk.describe()
+    - dk.sleep()
     - dk.close()
 
 ---
@@ -50,6 +51,7 @@ main()
 - options: `Object`
     - api_key: `string` API Key to authenticate the session. You can find yours here: https://beta.dashblock.com
     - endpoint: `string` (Optional) Endpoint to connect to (default to wss://beta.dashblock.com)
+    - log_level: `string` (Optional) Display logs of communication with browser. Allowed values: "off", "error", "info", "debug"
 
 ##### Return object
 - `Promise<DashblockInstance>`
@@ -57,7 +59,8 @@ main()
 ##### Sample
 ```javascript
 var dk = await Dashblock.connect({
-    api_key: YOU_API_KEY
+    api_key: YOU_API_KEY,
+    log_level: 'debug'
 })
 ```
 ### __**dk.set({ device: `string`, proxy: `string`})**__
@@ -91,13 +94,15 @@ Collect and structure automatically data on a given page.
 - `SchemaItem`:
     - name: `string`. Define the name of the information
     - format: `string`. Allowed values are `NUMBER`, `DATE`, `DATE_RANGE`, `URL`, `STRING`, `BOOLEAN`, `CURRENCY`, `ARRAY<NUMBER>`, `ARRAY<DATE>`, `ARRAY<CURRENCY>`. Defaults to `STRING`. This parameter allows you to turn natural language information into a machine readable format.
-    - attribute: `Object`. Define where to get the value
-        - css: `string`. Get the css property of an elements, must be mapped to camel case (background-image => backgroundImage). Accepted values: backgroundImage.
-        - html: `string`. Get the attribute from the html tag (href, src...)
-    - selection: `Selector[]`
+    - value: `Object`. Define where to get the value
+        - style: `string`. Get the css property of an elements, must be mapped to camel case (background-image => backgroundImage). Accepted values: backgroundImage.
+        - attribute: `string`. Get the attribute from the html tag (href, src...)
+        - content: `number`. Depth of text content. 0 will only retrieve direct textNodes of the elements and -1 all descendants textNodes of this element.
+    - selection: `Selection`
 
-- `Selector`:
+- `Selection`:
     - css: `string`. Identify one or more elements on a page. The provided selector(s) need to match all the elements you want to extract.
+    - content: `string`. Identify elements based on their content. If css and content are provided, only elements matching both will be selected.
 
 ##### Return object
 - `Promise<Object[]>`. Where object follows the defined schema
@@ -107,43 +112,45 @@ Collect and structure automatically data on a given page.
     await dk.goto("https://news.ycombinator.com/")
     var results = await dk.collect([{
                         name: 'title',
-                        selection: [{
+                        selection: {
                             css: 'td.title > a.storylink'
-                        }]
+                        }
                     }, 
                     {
                         name: 'link',
-                        attribute: {
-                            html: 'href'
+                        value: {
+                            attribute: 'href'
                         },
-                        selection: [{
+                        selection: {
                             css: 'td.title > a.storylink'
-                        }]
+                        }
                     },
                     {
                         name: 'points',
-                        selection: [{
+                        format: 'NUMBER',
+                        selection: {
                             css: 'span.score'
-                        }]
+                        }
                     }, 
                     {
                         name: 'username',
-                        selection: [{
+                        selection: {
                             css: 'td.subtext > a.hnuser'
-                        }]
+                        }
                     },
                     {
                         name: 'posted_ts',
                         format: 'DATE',
-                        selection: [{
+                        selection: {
                             css: 'span.age > a'
-                        }]
+                        }
                     },
                     {
                         name: 'comments',
-                        selection: [{
+                        format: 'NUMBER',
+                        selection: {
                             css: 'td.subtext > a:nth-child(6)'
-                        }]
+                        }
                     }])
 
 // Results will look like :
@@ -151,45 +158,48 @@ Collect and structure automatically data on a given page.
 //      'An ant colony has memories its individual members don’t have (2019)',
 //     link:
 //      'https://aeon.co/ideas/an-ant-colony-has-memories-that-its-individual-members-dont-have',
-//     points: '177 points',
+//     points: 177,
 //     username: 'maxbaines',
 //     posted_ts: '2020-01-16 08:24:06',
-//     comments: '58 comments' },
+//     comments: 58 },
 //   { title: 'Why Amsterdam’s Canal Houses Have Endured for 300 Years',
 //     link:
 //      'https://www.citylab.com/design/2020/01/amsterdam-architecture-history-canal-houses-urban-design/604921/',
-//     points: '9 points',
+//     points: 9,
 //     username: 'pseudolus',
 //     posted_ts: '2020-01-16 11:58:06',
-//     comments: 'discuss' },
 // ....
 ```
 
-### **dk.click({ css: `string` })**
-Click on the element matching the selection
+### **dk.click(selection: Selection)**
+Click on the element matching the selection. Throw an error if there is more than one.
 
 ##### Parameters
-- `Selector`:
-    - css: `string`. CSS selector matching exactly one element on the page.
+- `Selection`:
+    - css: `string`. Identify one or more elements on a page.
+    - content: `string`. Identify elements based on their content. If css and content are provided, only elements matching both will be selected.
 
 ##### Return object
 - `Promise<void>`. Where object follows the defined schema
 
-### **dk.clickAll({ css: `string` })**
+### **dk.clickAll(selection: Selection)**
 Click on all elements matching the selection
 
 ##### Parameters
-- `Selector`:
+- `Selection`:
     - css: `string`. Identify one or more elements on a page.
+    - content: `string`. Identify elements based on their content. If css and content are provided, only elements matching both will be selected.
 
 ##### Return object
 - `Promise<void>`
 
-### **dk.input(selector: { css: `string` }, value: `string`)**
+### **dk.input(selection: Selection, value: `string`)**
 Input data on the given selected input element
 
 ##### Parameters
-- selector: Should match a text editable element on the page
+- `Selection`:
+    - css: `string`. Identify one or more elements on a page.
+    - content: `string`. Identify elements based on their content. If css and content are provided, only elements matching both will be selected.
 
 ##### Return object
 - `Promise<void>`
@@ -205,3 +215,9 @@ Send a description of the page (url, title, description, author, favicon, links.
 
 ##### Return object
 - `Promise<PageDescription>`.
+
+### **dk.sleep(duration: number)**
+Sleep for a specified duration (in milliseconds)
+
+##### Return object
+- `Promise<void>`.

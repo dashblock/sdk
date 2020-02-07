@@ -1,9 +1,11 @@
 import WebSocket from "isomorphic-ws";
 import { EventEmitter } from "events";
+import { logger } from "./logger";
 
 export class Client extends EventEmitter {
     
     socket: WebSocket;
+
     private currentId: number;
     private callbacks: {[id: string]: Function};
 
@@ -38,6 +40,7 @@ export class Client extends EventEmitter {
     static async connect(address: string, options: any): Promise<Client> {
         return new Promise((resolve, reject) => {
             var headers: any = {}
+            logger.debug("[CONNECTION] Connecting to remote browser...")
             headers['Authorization'] = 'Bearer '+options.api_key
             if (options.height) {
                 headers['Height'] = options.height
@@ -50,6 +53,7 @@ export class Client extends EventEmitter {
             })
             socket.onerror = (err: any) => {
                 if (err.message) {
+                    logger.error("Unable to connect to browser")
                     reject(err.message)    
                 }
                 else {
@@ -62,6 +66,7 @@ export class Client extends EventEmitter {
                         msg = JSON.parse(msg.data)
                         if (msg.state=='READY') {
                             var client = new Client(socket)
+                            logger.info("[CONNECTION] Connected to remote browser")
                             resolve(client)
                         }
                         else if(msg.state=='ERROR') {
@@ -84,11 +89,14 @@ export class Client extends EventEmitter {
     async send(method: string, params?: any) {
         return new Promise((resolve, reject) => {
             this.currentId++;
+            logger.debug("[COMMAND] ["+this.currentId+"] Sending command "+method)
             this.callbacks[this.currentId] = (err: any, results: any) => {
                 if (err) {
+                    logger.error("[COMMAND] ["+this.currentId+"] Command "+method+" failed. Reason: "+err)
                     reject(err)
                 }
                 else {
+                    logger.info("[COMMAND] ["+this.currentId+"] Command "+method+" executed successfully")
                     resolve(results)
                 }
             }
@@ -101,9 +109,11 @@ export class Client extends EventEmitter {
             this.callbacks[msg.id](msg.error, msg.results)
         }
         else if (msg.error) {
+            logger.error('[ERROR] ', msg.error)
             throw msg.error
         }
         else if (msg.event) {
+            logger.info("[EVENT] "+msg.event)
             this.emit(msg.event, msg.data)
         }
         else {
@@ -112,6 +122,7 @@ export class Client extends EventEmitter {
     }
 
     close() {
+        logger.info("[CONNECTION] Connection to remote browser closed")
         return this.socket.close()
     }
 }
