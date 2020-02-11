@@ -93,14 +93,15 @@ Collect and structure automatically data on a given page.
 - `Schema`: `SchemaItem[]`
 - `SchemaItem`:
     - name: `string`. Define the name of the information
-    - format: `string`. Allowed values are `NUMBER`, `DATE`, `DATE_RANGE`, `URL`, `STRING`, `BOOLEAN`, `CURRENCY`, `ARRAY<NUMBER>`, `ARRAY<DATE>`, `ARRAY<CURRENCY>`. Defaults to `STRING`. This parameter allows you to turn natural language information into a machine readable format.
-    - value: `Object`. Define where to get the value
+    - format: `string`. (optional, default to STRING) Allowed values are `NUMBER`, `DATE`, `DATE_RANGE`, `URL`, `STRING`, `BOOLEAN`, `CURRENCY`, `ARRAY<NUMBER>`, `ARRAY<DATE>`, `ARRAY<CURRENCY>`. Defaults to `STRING`. This parameter allows you to turn natural language information into a machine readable format.
+    - value: `Object`. (optional, default to content: -1) Define where to get the value
         - style: `string`. Get the css property of an elements, must be mapped to camel case (background-image => backgroundImage). Accepted values: backgroundImage.
         - attribute: `string`. Get the attribute from the html tag (href, src...)
         - content: `number`. Depth of text content. 0 will only retrieve direct textNodes of the elements and -1 all descendants textNodes of this element.
     - selection: `Selection`
+    - schema: `Schema` (optional). You can create nested entities by providing a schema for this field
 
-- `Selection`:
+- `Selection`: If you provide both fields, you will get the intersection of the selections.
     - css: `string`. Identify one or more elements on a page. The provided selector(s) need to match all the elements you want to extract.
     - content: `string`. Identify elements based on their content. If css and content are provided, only elements matching both will be selected.
 
