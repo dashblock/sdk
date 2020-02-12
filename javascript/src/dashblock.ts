@@ -15,7 +15,7 @@ export type Schema = {
         attribute?: string,
         content?: number
     },
-    selection: Selection,
+    selection?: Selection,
     schema?: Schema
 }[]
 
