@@ -78,6 +78,10 @@ export class Dashblock extends EventEmitter {
         return this.client.send("html").catch(this.handleError)
     }
 
+    async sleep(duration: number) {
+        return this.client.send("sleep", { duration: duration }).catch(this.handleError)
+    }
+
     async close() {
         return this.client.close()
     }
