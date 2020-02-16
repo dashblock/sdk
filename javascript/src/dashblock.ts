@@ -27,10 +27,16 @@ export class Dashblock extends EventEmitter {
     private constructor(client: Client) {
         super()
         this.client = client;
+        this.client.on("event", (evtName, params) => {
+            this.emit(evtName, params)
+        })
         this.on('newListener', async (evtName: string, cb: Function) => {
-            this.client.on(evtName, (...args) => {
-                cb(...args)
-            })
+            switch (evtName) {
+                case "frame":
+                    return this.client.send("enableFrame", { enabled: true })
+                default:
+                    throw new Error("Event not recognized")
+            }
         })
     }
 

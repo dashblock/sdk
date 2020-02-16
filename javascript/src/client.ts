@@ -24,40 +24,21 @@ export class Client extends EventEmitter {
                 console.error("Unable to parse msg")
             }
         }
-        
-        this.on('newListener', (evtName, cb) => {
-            switch (evtName) {
-                case "frame":
-                    return this.send("enableFrame", { enabled: true })
-                case "page":
-                    return this.send("enablePage", { enabled: true })
-                default:
-                    throw new Error(`Invalid event ${evtName}`)
-            }
-        })
     }
 
     static async connect(address: string, options: any): Promise<Client> {
         return new Promise((resolve, reject) => {
-            var headers: any = {}
             logger.debug("[CONNECTION] Connecting to remote browser...")
-            headers['Authorization'] = 'Bearer '+options.api_key
-            if (options.height) {
-                headers['Height'] = options.height
-            }
-            if (options.width) {
-                headers['Width'] = options.width
-            }
-            var socket = new WebSocket(address, null, {
-                headers: headers
-            })
+            var searchParams = new URLSearchParams()
+            searchParams.set('apiKey', options.api_key)
+            var socket = new WebSocket(address+"?"+searchParams.toString())
             socket.onerror = (err: any) => {
                 if (err.message) {
                     logger.error("Unable to connect to browser")
-                    reject(err.message)    
+                    reject(err.message)
                 }
                 else {
-                    reject(`Server ${address} unreachable. Are you sure of the address ?`)
+                    reject(`Host ${address} unreachable`)
                 }
             }
             socket.onopen = () => {
@@ -114,7 +95,7 @@ export class Client extends EventEmitter {
         }
         else if (msg.event) {
             logger.info("[EVENT] "+msg.event)
-            this.emit(msg.event, msg.data)
+            this.emit("event", msg.event, msg.params)
         }
         else {
             throw "Unknown error"
