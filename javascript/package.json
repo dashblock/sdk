@@ -1,6 +1,6 @@
 {
   "name": "@dashblock/sdk",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "Dashblock SDK",
   "main": "dist/index.js",
   "scripts": {

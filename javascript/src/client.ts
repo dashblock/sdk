@@ -7,7 +7,7 @@ export class Client extends EventEmitter {
     socket: WebSocket;
 
     private currentId: number;
-    private callbacks: {[id: string]: Function};
+    private callbacks: {[ id: string ]: Function};
 
     constructor(socket: WebSocket) {
         super()
@@ -27,6 +27,7 @@ export class Client extends EventEmitter {
     }
 
     static async connect(address: string, options: any): Promise<Client> {
+        var self = this;
         return new Promise((resolve, reject) => {
             logger.debug("[CONNECTION] Connecting to remote browser...")
             var searchParams = new URLSearchParams()
@@ -46,7 +47,8 @@ export class Client extends EventEmitter {
                     try {
                         msg = JSON.parse(msg.data)
                         if (msg.state=='READY') {
-                            var client = new Client(socket)
+                            //@ts-ignore
+                            var client = new self.prototype.constructor(socket)
                             logger.info("[CONNECTION] Connected to remote browser")
                             resolve(client)
                         }
@@ -60,7 +62,7 @@ export class Client extends EventEmitter {
                         }
                     }
                     catch(e) {
-                        reject("Unable to connect")
+                        reject(e.message)
                     }
                 }
             }
