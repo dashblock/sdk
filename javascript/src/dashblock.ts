@@ -41,10 +41,12 @@ export class Dashblock extends EventEmitter {
     }
 
     static async connect(options: { api_key: string, endpoint?: string, log_level?: string }) {
+        var self = this
         logger.setLevel(options.log_level)
         var endpoint = options.endpoint || "wss://beta.dashblock.com"
         var client = await Client.connect(endpoint, options)
-        var dk = new Dashblock(client)
+        //@ts-ignore
+        var dk = new self.prototype.constructor(client)
         return dk
     }
 
