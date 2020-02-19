@@ -4,7 +4,7 @@
 1. [Getting Started](#getting-started)
 2. [API](#api)
     - Dashblock.connect(options: `object`)
-    - dk.set({ device: `string`, proxy: `string` })
+    - dk.set({ device: `string`, proxy: `string`, block: `string[]` })
     - dk.goto(url: `string`, options: `object`)
     - dk.html()
     - dk.collect(schema: `Schema`)
@@ -63,10 +63,11 @@ var dk = await Dashblock.connect({
     log_level: 'debug'
 })
 ```
-### __**dk.set({ device: `string`, proxy: `string`})**__
+### __**dk.set({ device: `string`, proxy: `string`, block: `string[]`})**__
 ##### Parameters
 - device: `string`. Allowed values are `mobile` and `desktop`. The browser will emulate the device dimension and user-agent.
 - proxy: `string`. Allowed values are `none` and `datacenter`. You can use a proxy on the browser to change the default IP addresses.
+- block: `string[]`. Block resources based on their type to speed up performances. Allowed values are `script`, `image`, `style`.
 
 ##### Return object
 - `Promise<void>`
