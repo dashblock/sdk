@@ -66,6 +66,9 @@ export class Client extends EventEmitter {
                     }
                 }
             }
+            socket.onclose = () => {
+                logger.info("[CONNECTION] Connection to remote browser closed")
+            }
         })
     }
 
@@ -105,7 +108,6 @@ export class Client extends EventEmitter {
     }
 
     close() {
-        logger.info("[CONNECTION] Connection to remote browser closed")
         return this.socket.close()
     }
 }

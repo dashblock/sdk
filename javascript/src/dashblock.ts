@@ -50,7 +50,7 @@ export class Dashblock extends EventEmitter {
         return dk
     }
 
-    async set(config: { device?: 'desktop' | 'mobile', proxy?: 'datacenter' | 'none', block?: ('image' | 'script' | 'style')[] }) {
+    async set(config: { device?: 'desktop' | 'mobile', proxy?: 'datacenter' | 'none', block?: ('image' | 'script' | 'style' | 'vendor')[] }) {
         return this.client.send("set", config)
     }
 

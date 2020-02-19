@@ -67,7 +67,7 @@ var dk = await Dashblock.connect({
 ##### Parameters
 - device: `string`. Allowed values are `mobile` and `desktop`. The browser will emulate the device dimension and user-agent.
 - proxy: `string`. Allowed values are `none` and `datacenter`. You can use a proxy on the browser to change the default IP addresses.
-- block: `string[]`. Block resources based on their type to speed up performances. Allowed values are `script`, `image`, `style`.
+- block: `string[]`. Block resources based on their type to speed up performances. Allowed values are `script`, `image`, `style`, `vendor`
 
 ##### Return object
 - `Promise<void>`
