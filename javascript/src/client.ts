@@ -21,7 +21,7 @@ export class Client extends EventEmitter {
                 this.onMessage.bind(this)(parsedMsg)
             }
             catch (e) {
-                console.error("Unable to parse msg")
+                this.emit("error", e)
             }
         }
     }
@@ -46,19 +46,14 @@ export class Client extends EventEmitter {
                 socket.onmessage = (msg: any) => {
                     try {
                         msg = JSON.parse(msg.data)
-                        if (msg.state=='READY') {
+                        if (msg.id==0) {
                             //@ts-ignore
                             var client = new self.prototype.constructor(socket)
                             logger.info("[CONNECTION] Connected to remote browser")
                             resolve(client)
                         }
-                        else if(msg.state=='ERROR') {
-                            if (msg.error) {
-                                reject(msg.error)
-                            }
-                            else {
-                                reject("Unable to connect")
-                            }
+                        else if (msg.error) {
+                            reject(msg.error)
                         }
                     }
                     catch(e) {
@@ -79,6 +74,7 @@ export class Client extends EventEmitter {
             this.callbacks[this.currentId] = (err: any, results: any) => {
                 if (err) {
                     logger.error("[COMMAND] ["+this.currentId+"] Command "+method+" failed. Reason: "+err)
+                    this.close()
                     reject(err)
                 }
                 else {
@@ -94,16 +90,16 @@ export class Client extends EventEmitter {
         if (msg.id && this.callbacks[msg.id]) {
             this.callbacks[msg.id](msg.error, msg.results)
         }
-        else if (msg.error) {
+        else if (!msg.id && msg.error) {
             logger.error('[ERROR] ', msg.error)
-            throw msg.error
+            this.emit("error", msg.error)
         }
         else if (msg.event) {
             logger.info("[EVENT] "+msg.event)
             this.emit("event", msg.event, msg.params)
         }
         else {
-            throw "Unknown error"
+            this.emit("error", "Unkown error")
         }
     }
 
