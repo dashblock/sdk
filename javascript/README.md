@@ -4,7 +4,7 @@
 1. [Getting Started](#getting-started)
 2. [API](#api)
     - Dashblock.connect(options: `object`)
-    - dk.set({ device: `string`, proxy: `string`, block: `string[]` })
+    - dk.set({ device: `string`, proxy: `string`, block: `string[]`, country: `string` })
     - dk.goto(url: `string`, options: `object`)
     - dk.html()
     - dk.collect(schema: `Schema`)
@@ -63,11 +63,13 @@ var dk = await Dashblock.connect({
     log_level: 'debug'
 })
 ```
-### __**dk.set({ device: `string`, proxy: `string`, block: `string[]`})**__
+### __**dk.set({ device: `string`, proxy: `string`, block: `string[]`, country: `string`})**__
 ##### Parameters
 - device: `string`. Allowed values are `mobile` and `desktop`. The browser will emulate the device dimension and user-agent.
-- proxy: `string`. Allowed values are `none` and `datacenter`. You can use a proxy on the browser to change the default IP addresses.
-- block: `string[]`. Block resources based on their type to speed up performances. Allowed values are `script`, `image`, `style`, `vendor`
+- proxy: `string`. Allowed values are `none` or a custom proxy url you want to use.
+- block: `string[]`. Block resources based on their type to speed up performances. Allowed values are `script`, `style`, `vendor`
+- country: `string`. The country you would to connect from (Incompatible with proxy option). Allowed values are : US, IN, GE, GB, RU, CN, JP, BR, AU, NO, CL.
+
 
 ##### Return object
 - `Promise<void>`
