@@ -1,2 +1,0 @@
-pyee==6.0.0
-websockets==8.1
